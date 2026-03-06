@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlanClub - Premium Access</title>
+    <style>
+        :root {
+            --neon-cyan: #00f3ff;
+            --neon-purple: #bc13fe;
+            --dark-bg: #050505;
+            --card-bg: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            font-family: 'Lexend', sans-serif;
+            background-color: var(--dark-bg);
+            color: white;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+        }
+
+        .watermark-bg {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 8rem; font-weight: 900;
+            color: rgba(255, 255, 255, 0.02); z-index: -1;
+            pointer-events: none;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 450px;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        header {
+            text-align: center;
+            padding: 50px 0 30px 0;
+        }
+
+        .logo {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--neon-cyan), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            filter: drop-shadow(0 0 10px rgba(0, 243, 255, 0.3));
+        }
+
+        /* Vistas */
+        .view { display: none; animation: slideIn 0.3s ease-out; }
+        .view.active { display: block; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Botones de Menú Principal */
+        .menu-btn {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            padding: 25px;
+            margin: 15px 0;
+            border-radius: 20px;
+            width: 100%;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: 0.3s;
+        }
+
+        .menu-btn:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: var(--neon-cyan);
+            transform: translateY(-3px);
+        }
+
+        .btn-exit {
+            background: none;
+            border: 1px solid #333;
+            color: #666;
+            margin-top: 50px;
+            padding: 10px;
+            font-size: 0.9rem;
+        }
+
+        /* Estilos de Formulario y Plano */
+        .card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+        }
+
+        input, .btn-action {
+            width: 100%; padding: 15px; margin: 10px 0;
+            border-radius: 12px; border: 1px solid #333;
+            background: #111; color: white; box-sizing: border-box;
+        }
+
+        .btn-action {
+            background: linear-gradient(90deg, var(--neon-purple), #7a12f5);
+            border: none; font-weight: bold; cursor: pointer;
+        }
+
+        .btn-back {
+            background: none; border: none; color: var(--neon-cyan);
+            cursor: pointer; font-size: 0.9rem; margin-bottom: 20px;
+            display: flex; align-items: center;
+        }
+
+        /* Plano Arquitectónico */
+        .mapa-container {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            gap: 10px; background: #000; padding: 15px;
+            border-radius: 15px; border: 1px solid #222; margin: 20px 0;
+        }
+
+        .mesa {
+            height: 50px; background: #222; border: 1px solid #444;
+            border-radius: 8px; display: flex; align-items: center;
+            justify-content: center; font-size: 10px; cursor: pointer;
+        }
+
+        .mesa.selected { background: var(--neon-cyan); color: black; box-shadow: 0 0 15px var(--neon-cyan); }
+    </style>
+</head>
+<body>
+
+    <div class="watermark-bg">PLANCLUB</div>
+
+    <div class="app-container">
+        
+        <div id="view-home" class="view active">
+            <header>
+                <div class="logo">PLANCLUB</div>
+                <p style="color: #888; letter-spacing: 2px;">EXCLUSIVE NIGHTS</p>
+            </header>
+
+            <button class="menu-btn" onclick="showView('form')">
+                <span>✨ Nueva Reserva</span>
+                <span>→</span>
+            </button>
+
+            <button class="menu-btn" onclick="showView('list')">
+                <span>📅 Mis Planes</span>
+                <span>→</span>
+            </button>
+
+            <button class="menu-btn btn-exit" onclick="btnSalir()">
+                Salir de la App
+            </button>
+        </div>
+
+        <div id="view-form" class="view">
+            <button class="btn-back" onclick="showView('home')">← Volver al Menú</button>
+            <div class="card">
+                <h3>Datos de Reserva</h3>
+                <input type="text" id="nombre" placeholder="¿A nombre de quién?">
+                <input type="date" id="fecha">
+                <input type="number" id="personas" placeholder="Número de personas">
+                
+                <h4 style="margin-top: 20px;">Selecciona Ubicación:</h4>
+                <div class="mapa-container">
+                    <div class="mesa" onclick="selectMesa(this, 1)">M1</div>
+                    <div class="mesa" onclick="selectMesa(this, 2)">M2</div>
+                    <div class="mesa" onclick="selectMesa(this, 3)">M3</div>
+                    <div class="mesa" onclick="selectMesa(this, 4)">M4</div>
+                    <div class="mesa" onclick="selectMesa(this, 5)">M5</div>
+                    <div class="mesa" onclick="selectMesa(this, 6)">M6</div>
+                    <div class="mesa" onclick="selectMesa(this, 7)">M7</div>
+                    <div class="mesa" onclick="selectMesa(this, 8)">M8</div>
+                </div>
+
+                <button class="btn-action" onclick="saveReserva()">Confirmar Solicitud</button>
+            </div>
+        </div>
+
+        <div id="view-list" class="view">
+            <button class="btn-back" onclick="showView('home')">← Volver al Menú</button>
+            <div id="reserva-container">
+                </div>
+        </div>
+
+    </div>
+
+    <script>
+        let selectedMesa = null;
+        let dbReservas = JSON.parse(localStorage.getItem('pc_db')) || [];
+
+        function showView(id) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('view-' + id).classList.add('active');
+            if(id === 'list') renderList();
+        }
+
+        function btnSalir() {
+            const frases = [
+                "¿Tan rápido? El DJ apenas está calentando. 🔥",
+                "¡Cuidado al salir! La calle está fría, el club no. 🧊",
+                "Tu reserva te extrañará... y tu billetera también. 💸",
+                "Ok, ve a dormir. Pero el que se duerme se lo lleva la corriente. 😴"
+            ];
+            const random = frases[Math.floor(Math.random() * frases.length)];
+            alert(random);
+        }
+
+        function selectMesa(el, num) {
+            document.querySelectorAll('.mesa').forEach(m => m.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedMesa = num;
+        }
+
+        function saveReserva() {
+            const n = document.getElementById('nombre').value;
+            const f = document.getElementById('fecha').value;
+            const p = document.getElementById('personas').value;
+
+            if(n && f && p && selectedMesa) {
+                const item = { id: Date.now(), nombre: n, fecha: f, personas: p, mesa: selectedMesa, status: 'Pendiente' };
+                dbReservas.push(item);
+                localStorage.setItem('pc_db', JSON.stringify(dbReservas));
+                alert("¡Plan creado! Ahora encuéntralo en 'Mis Planes'.");
+                showView('home');
+                
+                // Limpiar campos
+                document.getElementById('nombre').value = '';
+                selectedMesa = null;
+            } else {
+                alert("Faltan datos o elegir mesa.");
+            }
+        }
+
+        function renderList() {
+            const container = document.getElementById('reserva-container');
+            if(dbReservas.length === 0) {
+                container.innerHTML = `
+                    <div class="card" style="text-align:center;">
+                        <p style="color:#666;">Aún no tienes planes...<br>¿Qué esperas para la fiesta?</p>
+                        <button class="btn-action" onclick="showView('form')">Crear mi primer plan</button>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = dbReservas.map(r => `
+                <div class="card" style="margin-bottom:15px; border-left: 4px solid ${r.status === 'Pendiente' ? '#ffaa00' : '#00ff88'}">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <small style="color:${r.status === 'Pendiente' ? '#ffaa00' : '#00ff88'}">${r.status.toUpperCase()}</small>
+                            <h4 style="margin:5px 0;">Mesa #${r.mesa}</h4>
+                            <p style="font-size:0.8rem; color:#aaa; margin:0;">${r.fecha} • ${r.personas} personas</p>
+                        </div>
+                        <button onclick="borrar(${r.id})" style="background:none; border:none; color:red; cursor:pointer;">✖</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function borrar(id) {
+            if(confirm("¿Eliminar este plan?")) {
+                dbReservas = dbReservas.filter(r => r.id !== id);
+                localStorage.setItem('pc_db', JSON.stringify(dbReservas));
+                renderList();
+            }
+        }
+    </script>
+</body>
+</html>

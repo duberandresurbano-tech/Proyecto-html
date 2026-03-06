@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlanClub - Premium Experience</title>
+    <style>
+        :root {
+            --neon-cyan: #00f3ff;
+            --neon-purple: #bc13fe;
+            --dark-bg: #030303;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            /* Colores de Mesas Segun Imagen */
+            --mesa-red: #ff3c3c;
+            --mesa-yellow: #ffec3d;
+            --mesa-orange: #ff913d;
+            --mesa-blue: #3d9dff;
+            --mesa-teal: #3dffec;
+        }
+
+        body {
+            font-family: 'Lexend', sans-serif;
+            background-color: var(--dark-bg);
+            color: white;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+            overflow-x: hidden;
+        }
+
+        .watermark-bg {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 8rem; font-weight: 900;
+            color: rgba(255, 255, 255, 0.015); z-index: -1;
+            pointer-events: none;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0 20px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            font-size: 2.8rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--neon-cyan), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            filter: drop-shadow(0 0 10px rgba(0, 243, 255, 0.2));
+        }
+
+        /* Vistas con Transición */
+        .view { display: none; }
+        .view.active { display: block; animation: slideUp 0.3s ease-out; }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Botones y Inputs Estilo Premium */
+        .btn-premium, .menu-btn {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: white;
+            padding: 22px;
+            margin: 12px 0;
+            border-radius: 18px;
+            width: 100%;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+
+        .menu-btn:hover { background: rgba(255,255,255,0.12); border-color: var(--neon-cyan); }
+
+        input, .btn-action {
+            width: 100%; padding: 16px; margin: 8px 0;
+            border-radius: 14px; border: 1px solid #222;
+            background: #0d0d0d; color: white; box-sizing: border-box; font-size: 1rem;
+        }
+
+        .btn-action {
+            background: linear-gradient(90deg, var(--neon-purple), #7a12f5);
+            border: none; font-weight: bold; cursor: pointer; margin-top: 15px;
+            box-shadow: 0 4px 15px rgba(188, 19, 254, 0.3);
+        }
+
+        .btn-back {
+            background: none; border: none; color: #888;
+            cursor: pointer; font-size: 0.9rem; margin-bottom: 15px;
+            display: flex; align-items: center; padding: 0;
+        }
+        .btn-back:hover { color: var(--neon-cyan); }
+
+        .card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.04);
+            backdrop-filter: blur(10px);
+        }
+
+        /* PLANO ARQUITECTÓNICO - RECREACIÓN DE LA IMAGEN CON CSS */
+        .plano-container {
+            margin: 20px auto;
+            border: 3px solid white;
+            padding: 10px;
+            position: relative;
+            background: black;
+            box-shadow: 0 0 15px rgba(255,255,255,0.1);
+            animation: neonBlink 4s infinite;
+            max-width: 380px;
+            border-radius: 10px;
+        }
+
+        .zona-label { font-size: 1.2rem; font-weight: bold; text-align: center; margin: 10px 0; text-transform: uppercase; letter-spacing: 2px; }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(8, 50px);
+            gap: 10px;
+            padding: 10px;
+        }
+
+        .dj-set {
+            grid-row: span 2; grid-column: 3 / 5;
+            background: #111; border: 1px solid #444; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; font-weight: bold;
+        }
+
+        .mesa {
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; font-weight: bold; color: black;
+            cursor: pointer; transition: 0.2s; border: 2px solid transparent;
+        }
+
+        .mesa.selected { transform: scale(1.15); box-shadow: 0 0 20px white; border-color: white; }
+
+        /* Estilos de Mesas por Color de Imagen */
+        .m-r { background: var(--mesa-red); box-shadow: 0 0 8px var(--mesa-red); border-color: var(--mesa-red); }
+        .m-y { background: var(--mesa-yellow); box-shadow: 0 0 8px var(--mesa-yellow); border-color: var(--mesa-yellow); }
+        .m-o { background: var(--mesa-orange); box-shadow: 0 0 8px var(--mesa-orange); border-color: var(--mesa-orange); }
+        .m-b { background: var(--mesa-blue); box-shadow: 0 0 8px var(--mesa-blue); border-color: var(--mesa-blue); }
+        .m-t { background: var(--mesa-teal); box-shadow: 0 0 8px var(--mesa-teal); border-color: var(--mesa-teal); }
+
+        @keyframes neonBlink { 0%, 100% { border-color: white; box-shadow: 0 0 15px rgba(255,255,255,0.1); } 50% { border-color: #666; box-shadow: 0 0 5px rgba(255,255,255,0.05); } }
+    </style>
+</head>
+<body>
+
+    <div class="watermark-bg">PLANCLUB</div>
+
+    <div class="app-container">
+        
+        <div id="view-home" class="view active">
+            <header>
+                <div class="logo">PLANCLUB</div>
+                <p style="color: #666; letter-spacing: 3px; font-size: 0.8rem;">ULTRA-PREMIUM NIGHTS</p>
+            </header>
+
+            <button class="menu-btn" onclick="showView('form')">
+                <span>✨ Nueva Reserva</span>
+                <span>→</span>
+            </button>
+
+            <button class="menu-btn" onclick="showView('list')">
+                <span>📅 Mis Planes</span>
+                <span>→</span>
+            </button>
+
+            <button class="menu-btn" style="border-color: #333; color: #555; margin-top: 50px; padding: 15px;" onclick="btnSalir()">
+                Salir de la App
+            </button>
+        </div>
+
+        <div id="view-form" class="view">
+            <button class="btn-back" onclick="showView('home')">← Regresar</button>
+            <div class="card">
+                <h3>Información de Reserva</h3>
+                <input type="text" id="nombre" placeholder="Nombre completo">
+                <input type="date" id="fecha">
+                <input type="number" id="personas" placeholder="Número de personas" min="1">
+                <button class="btn-action" onclick="confirmarDatos()">Confirmar Datos</button>
+            </div>
+        </div>
+
+        <div id="view-map" class="view">
+            <button class="btn-back" onclick="showView('form')">← Editar Datos</button>
+            <div class="zona-label">VIP ZONE</div>
+            
+            <div class="plano-container">
+                <div class="grid-layout">
+                    <div class="mesa m-r" onclick="selectMesa(this, 1)">1</div>
+                    <div class="mesa m-r" onclick="selectMesa(this, 2)">2</div>
+                    <div class="mesa m-r" onclick="selectMesa(this, 3)">3</div>
+                    
+                    <div class="mesa m-y" style="grid-column: 1 / 2; grid-row: 4 / 5;" onclick="selectMesa(this, 4)">4</div>
+                    <div class="mesa m-y" style="grid-column: 1 / 2; grid-row: 3 / 4;" onclick="selectMesa(this, 5)">5</div>
+                    <div class="mesa m-y" style="grid-column: 1 / 2; grid-row: 2 / 3;" onclick="selectMesa(this, 6)">6</div>
+                    <div class="mesa m-y" style="grid-column: 2 / 3; grid-row: 2 / 3;" onclick="selectMesa(this, 7)">7</div>
+                    <div class="mesa m-y" style="grid-column: 3 / 4; grid-row: 2 / 3;" onclick="selectMesa(this, 8)">8</div>
+                    <div class="mesa m-y" style="grid-column: 4 / 5; grid-row: 2 / 3;" onclick="selectMesa(this, 9)">9</div>
+                    <div class="mesa m-y" style="grid-column: 5 / 6; grid-row: 2 / 3;" onclick="selectMesa(this, 10)">10</div>
+                    <div class="mesa m-y" style="grid-column: 6 / 7; grid-row: 2 / 3;" onclick="selectMesa(this, 11)">11</div>
+                    <div class="mesa m-y" style="grid-column: 6 / 7; grid-row: 3 / 4;" onclick="selectMesa(this, 12)">12</div>
+                    <div class="mesa m-y" style="grid-column: 6 / 7; grid-row: 4 / 5;" onclick="selectMesa(this, 13)">13</div>
+                    <div class="mesa m-y" style="grid-column: 6 / 7; grid-row: 5 / 6;" onclick="selectMesa(this, 14)">14</div>
+
+                    <div class="mesa m-r" style="grid-column: 6 / 7; grid-row: 6 / 7;" onclick="selectMesa(this, 15)">15</div>
+                    <div class="mesa m-r" style="grid-column: 6 / 7; grid-row: 7 / 8;" onclick="selectMesa(this, 16)">16</div>
+                    <div class="mesa m-r" style="grid-column: 6 / 7; grid-row: 8 / 9;" onclick="selectMesa(this, 17)">17</div>
+
+                    <div class="mesa m-o" style="grid-column: 2 / 3; grid-row: 4 / 5;" onclick="selectMesa(this, 18)">18</div>
+                    <div class="mesa m-o" style="grid-column: 5 / 6; grid-row: 4 / 5;" onclick="selectMesa(this, 19)">19</div>
+
+                    <div class="dj-set">DJ</div>
+
+                    <div class="mesa m-b" style="grid-column: 3 / 4; grid-row: 5 / 6;" onclick="selectMesa(this, 20)">20</div>
+                    <div class="mesa m-b" style="grid-column: 4 / 5; grid-row: 5 / 6;" onclick="selectMesa(this, 30)">30</div>
+
+                    <div class="mesa m-t" style="grid-column: 3 / 4; grid-row: 6 / 7;" onclick="selectMesa(this, 100)">100</div>
+                    <div class="mesa m-t" style="grid-column: 4 / 5; grid-row: 6 / 7;" onclick="selectMesa(this, 101)">101</div>
+
+                </div>
+            </div>
+            
+            <div class="zona-label" style="font-size: 1rem; color: #aaa;">DANCE FLOOR</div>
+            <p id="map-status" style="text-align: center; color: var(--neon-purple); font-weight: bold; margin-top: 15px;"></p>
+            <button class="btn-action" id="btn-save" style="display:none;" onclick="saveReserva()">Confirmar Mesa y Reservar</button>
+        </div>
+
+        <div id="view-list" class="view">
+            <button class="btn-back" onclick="showView('home')">← Menú Principal</button>
+            <div id="reserva-container">
+                </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Variables globales del estado
+        let selectedMesaNum = null;
+        let tempDatos = {};
+        let dbReservas = JSON.parse(localStorage.getItem('pc_ultra_db')) || [];
+
+        function showView(id) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('view-' + id).classList.add('active');
+            if(id === 'list') renderList();
+        }
+
+        function btnSalir() {
+            const frases = [
+                "¿Alguien pidió un taxi? ¡PlanClub te extrañará! 🚖",
+                "Ok, ve a casa. Pero la fiesta sigue en tu mente. 🎧",
+                "Tu reserva de PlanClub te estará esperando. 💸",
+                "Nos vemos cuando el DJ vuelva a soltar el beat. 🔥"
+            ];
+            alert(frases[Math.floor(Math.random() * frases.length)]);
+        }
+
+        // --- FLUJO DE RESERVA ---
+
+        function confirmarDatos() {
+            const n = document.getElementById('nombre').value;
+            const f = document.getElementById('fecha').value;
+            const p = document.getElementById('personas').value;
+
+            if(n && f && p) {
+                tempDatos = { nombre: n, fecha: f, personas: p };
+                showView('map');
+            } else {
+                alert("Completa todos tus datos antes de continuar.");
+            }
+        }
+
+        function selectMesa(el, num) {
+            // Deseleccionar anterior
+            document.querySelectorAll('.mesa').forEach(m => m.classList.remove('selected'));
+            // Seleccionar nueva
+            el.classList.add('selected');
+            selectedMesaNum = num;
+            
+            // Actualizar UI
+            document.getElementById('map-status').innerText = "Has elegido la Mesa #" + num;
+            document.getElementById('btn-save').style.display = "block";
+        }
+
+        function saveReserva() {
+            const item = { 
+                id: Date.now(), 
+                ...tempDatos,
+                mesa: selectedMesaNum, 
+                status: 'Pendiente' 
+            };
+            dbReservas.push(item);
+            localStorage.setItem('pc_ultra_db', JSON.stringify(dbReservas));
+            
+            alert("¡Plan creado! Tu solicitud de reserva está siendo procesada.");
+            showView('home');
+            
+            // Limpiar campos y resetear estado
+            document.getElementById('nombre').value = '';
+            document.getElementById('fecha').value = '';
+            document.getElementById('personas').value = '';
+            selectedMesaNum = null;
+            tempDatos = {};
+            document.querySelectorAll('.mesa').forEach(m => m.classList.remove('selected'));
+            document.getElementById('map-status').innerText = "";
+            document.getElementById('btn-save').style.display = "none";
+        }
+
+        // --- GESTIÓN DE MIS PLANES ---
+
+        function renderList() {
+            const container = document.getElementById('reserva-container');
+            if(dbReservas.length === 0) {
+                container.innerHTML = `
+                    <div class="card" style="text-align:center; padding: 50px;">
+                        <p style="color:#666; font-size: 1.2rem;">Tu agenda de la noche<br>está vacía.</p>
+                        <button class="btn-action" onclick="showView('form')">Empezar la fiesta</button>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = dbReservas.map(r => `
+                <div class="card" style="margin-bottom:15px; border-left: 5px solid ${r.status === 'Pendiente' ? '#ffaa00' : '#00ff88'}">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <small style="color:${r.status === 'Pendiente' ? '#ffaa00' : '#00ff88'}; font-weight: bold; letter-spacing: 1px;">
+                                ${r.status.toUpperCase()}
+                            </small>
+                            <h4 style="margin:8px 0;">Mesa #${r.mesa}</h4>
+                            <p style="font-size:0.85rem; color:#aaa; margin:0;">${r.fecha} • ${r.personas} personas</p>
+                        </div>
+                        <button onclick="borrar(${r.id})" style="background:none; border:none; color:#f44; cursor:pointer; font-size: 1.1rem;">✖</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function borrar(id) {
+            if(confirm("¿Seguro que quieres eliminar este plan?")) {
+                dbReservas = dbReservas.filter(r => r.id !== id);
+                localStorage.setItem('pc_ultra_db', JSON.stringify(dbReservas));
+                renderList();
+            }
+        }
+    </script>
+</body>
+</html>

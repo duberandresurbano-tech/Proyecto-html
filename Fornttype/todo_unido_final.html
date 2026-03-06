@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlanClub - Premium Experience</title>
+    <style>
+        :root {
+            --neon-cyan: #00f3ff;
+            --neon-purple: #bc13fe;
+            --dark-bg: #030303;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --mesa-red: #ff3c3c;
+            --mesa-yellow: #ffec3d;
+            --mesa-orange: #ff913d;
+            --mesa-blue: #3d9dff;
+            --mesa-teal: #3dffec;
+        }
+
+        body {
+            font-family: 'Lexend', sans-serif;
+            background-color: var(--dark-bg);
+            color: white;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+            overflow-x: hidden;
+        }
+
+        .watermark-bg {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 8rem; font-weight: 900;
+            color: rgba(255, 255, 255, 0.015); z-index: -1;
+            pointer-events: none;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .logo {
+            font-size: 2.8rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--neon-cyan), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+
+        /* Vistas */
+        .view { display: none; }
+        .view.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.04);
+            backdrop-filter: blur(10px);
+            margin-bottom: 20px;
+        }
+
+        input, .btn-action, .menu-btn {
+            width: 100%; padding: 18px; margin: 10px 0;
+            border-radius: 14px; border: 1px solid #222;
+            background: #0d0d0d; color: white; box-sizing: border-box; font-size: 1rem;
+            font-weight: bold; cursor: pointer; transition: 0.3s;
+        }
+
+        .btn-action {
+            background: linear-gradient(90deg, var(--neon-purple), #7a12f5);
+            border: none; box-shadow: 0 4px 15px rgba(188, 19, 254, 0.4);
+        }
+
+        .menu-btn { display: flex; justify-content: space-between; align-items: center; border-color: rgba(255,255,255,0.1); }
+        .menu-btn:hover { border-color: var(--neon-cyan); background: rgba(255,255,255,0.1); }
+
+        .btn-back { background: none; border: none; color: #888; cursor: pointer; margin-bottom: 15px; }
+
+        /* Plano Múltiple Selección */
+        .plano-container {
+            margin: 20px auto; border: 2px solid white; padding: 10px;
+            background: black; border-radius: 10px; max-width: 380px;
+        }
+
+        .grid-layout {
+            display: grid; grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(8, 45px); gap: 8px;
+        }
+
+        .dj-set { grid-row: span 2; grid-column: 3 / 5; background: #111; border: 1px solid #444; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; }
+
+        .mesa {
+            border-radius: 8px; display: flex; align-items: center; justify-content: center;
+            font-size: 0.7rem; font-weight: bold; color: black; cursor: pointer;
+        }
+
+        .mesa.selected { transform: scale(1.1); box-shadow: 0 0 15px white; border: 2px solid white; z-index: 2; }
+
+        /* Colores */
+        .m-r { background: var(--mesa-red); } .m-y { background: var(--mesa-yellow); } 
+        .m-o { background: var(--mesa-orange); } .m-b { background: var(--mesa-blue); } .m-t { background: var(--mesa-teal); }
+
+        /* Pasarela de Pago */
+        .metodo-pago {
+            background: #111; border: 1px solid #333; padding: 15px;
+            border-radius: 12px; margin: 10px 0; display: flex; align-items: center; cursor: pointer;
+        }
+        .metodo-pago:hover { border-color: var(--neon-cyan); }
+        .metodo-pago input { width: auto; margin-right: 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="watermark-bg">PLANCLUB</div>
+
+    <div class="app-container">
+        
+        <div id="view-home" class="view active">
+            <header>
+                <div class="logo">PLANCLUB</div>
+                <p style="color:#555; letter-spacing: 2px; font-size: 0.7rem;">ELITE NIGHTS</p>
+            </header>
+            <button class="menu-btn" onclick="showView('form')"><span>✨ Reservar Mesas</span><span>→</span></button>
+            <button class="menu-btn" onclick="showView('list')"><span>📅 Mis Reservas</span><span>→</span></button>
+            <button class="menu-btn" style="color:#444; margin-top:40px;" onclick="alert('¿Ya te vas? El ambiente está en su punto. 🔥')">Salir</button>
+        </div>
+
+        <div id="view-form" class="view">
+            <button class="btn-back" onclick="showView('home')">← Cancelar</button>
+            <div class="card">
+                <h3>Tus Datos</h3>
+                <input type="text" id="nombre" placeholder="Nombre completo">
+                <input type="date" id="fecha">
+                <input type="number" id="personas" placeholder="Total de asistentes">
+                <button class="btn-action" onclick="confirmarDatos()">Seleccionar Ubicación</button>
+            </div>
+        </div>
+
+        <div id="view-map" class="view">
+            <button class="btn-back" onclick="showView('form')">← Datos</button>
+            <div style="text-align:center;">
+                <small>Selecciona una o varias mesas</small>
+                <div class="plano-container">
+                    <div class="grid-layout" id="mapa-grid">
+                        </div>
+                </div>
+                <div id="map-info" class="card" style="margin-top:10px; display:none;">
+                    <p id="txt-mesas" style="margin:0; color:var(--neon-cyan);"></p>
+                    <h2 id="txt-total" style="margin:10px 0;"></h2>
+                    <button class="btn-action" onclick="irAPagar()">Ir a Pagar</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-pago" class="view">
+            <button class="btn-back" onclick="showView('map')">← Cambiar Mesas</button>
+            <div class="card">
+                <h2 style="color:var(--neon-purple); text-align:center;">Finalizar Pago</h2>
+                <div id="resumen-final" style="font-size:0.9rem; border-bottom:1px solid #333; padding-bottom:15px; margin-bottom:15px;"></div>
+                
+                <p>Método de pago:</p>
+                <div class="metodo-pago"><input type="radio" name="pay" checked> 💳 Tarjeta Crédito / Débito</div>
+                <div class="metodo-pago"><input type="radio" name="pay"> 📱 Nequi / Daviplata</div>
+                <div class="metodo-pago"><input type="radio" name="pay"> 🏦 PSE</div>
+                
+                <button class="btn-action" style="background:var(--neon-cyan); color:black;" onclick="finalizarTodo()">PAGAR AHORA</button>
+            </div>
+        </div>
+
+        <div id="view-list" class="view">
+            <button class="btn-back" onclick="showView('home')">← Menú</button>
+            <div id="reserva-container"></div>
+        </div>
+
+    </div>
+
+    <script>
+        let mesasSeleccionadas = [];
+        let tempUser = {};
+        let db = JSON.parse(localStorage.getItem('pc_v3')) || [];
+
+        function showView(id) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('view-' + id).classList.add('active');
+            if(id === 'map') renderMapa();
+            if(id === 'list') renderList();
+        }
+
+        function confirmarDatos() {
+            const n = document.getElementById('nombre').value;
+            const f = document.getElementById('fecha').value;
+            const p = document.getElementById('personas').value;
+            if(n && f && p) {
+                tempUser = { nombre: n, fecha: f, personas: p };
+                showView('map');
+            } else { alert("Llena tus datos primero."); }
+        }
+
+        // Configuración de mesas basada en tu imagen
+        const configMesas = [
+            {id:1, c:'m-r', g:'grid-row:8; grid-column:1;'}, {id:2, c:'m-r', g:'grid-row:7; grid-column:1;'}, {id:3, c:'m-r', g:'grid-row:6; grid-column:1;'},
+            {id:4, c:'m-y', g:'grid-row:5; grid-column:1;'}, {id:5, c:'m-y', g:'grid-row:4; grid-column:1;'}, {id:6, c:'m-y', g:'grid-row:3; grid-column:1;'},
+            {id:7, c:'m-y', g:'grid-row:2; grid-column:1;'}, {id:8, c:'m-y', g:'grid-row:2; grid-column:2;'}, {id:9, c:'m-y', g:'grid-row:2; grid-column:3;'},
+            {id:10, c:'m-y', g:'grid-row:2; grid-column:4;'}, {id:11, c:'m-y', g:'grid-row:2; grid-column:5;'}, {id:12, c:'m-y', g:'grid-row:2; grid-column:6;'},
+            {id:13, c:'m-y', g:'grid-row:3; grid-column:6;'}, {id:14, c:'m-y', g:'grid-row:4; grid-column:6;'}, {id:15, c:'m-r', g:'grid-row:5; grid-column:6;'},
+            {id:16, c:'m-r', g:'grid-row:6; grid-column:6;'}, {id:17, c:'m-r', g:'grid-row:7; grid-column:6;'}, {id:18, c:'m-o', g:'grid-row:4; grid-column:2;'},
+            {id:19, c:'m-o', g:'grid-row:4; grid-column:5;'}, {id:20, c:'m-b', g:'grid-row:5; grid-column:3;'}, {id:30, c:'m-b', g:'grid-row:5; grid-column:4;'},
+            {id:100, c:'m-t', g:'grid-row:6; grid-column:3;'}, {id:101, c:'m-t', g:'grid-row:6; grid-column:4;'}
+        ];
+
+        function renderMapa() {
+            const grid = document.getElementById('mapa-grid');
+            grid.innerHTML = '<div class="dj-set">DJ</div>';
+            configMesas.forEach(m => {
+                const div = document.createElement('div');
+                div.className = `mesa ${m.c} ${mesasSeleccionadas.includes(m.id) ? 'selected' : ''}`;
+                div.style = m.g;
+                div.innerText = m.id;
+                div.onclick = () => toggleMesa(m.id);
+                grid.appendChild(div);
+            });
+            actualizarInfoMapa();
+        }
+
+        function toggleMesa(id) {
+            if(mesasSeleccionadas.includes(id)) {
+                mesasSeleccionadas = mesasSeleccionadas.filter(m => m !== id);
+            } else {
+                mesasSeleccionadas.push(id);
+            }
+            renderMapa();
+        }
+
+        function actualizarInfoMapa() {
+            const info = document.getElementById('map-info');
+            if(mesasSeleccionadas.length > 0) {
+                info.style.display = "block";
+                document.getElementById('txt-mesas').innerText = "Mesas: " + mesasSeleccionadas.join(', ');
+                document.getElementById('txt-total').innerText = "$" + (mesasSeleccionadas.length * 40000).toLocaleString() + " COP";
+            } else { info.style.display = "none"; }
+        }
+
+        function irAPagar() {
+            document.getElementById('resumen-final').innerHTML = `
+                <b>Cliente:</b> ${tempUser.nombre}<br>
+                <b>Fecha:</b> ${tempUser.fecha}<br>
+                <b>Personas:</b> ${tempUser.personas}<br>
+                <b>Mesas elegidas:</b> ${mesasSeleccionadas.join(', ')}<br>
+                <b>Costo Reserva (Cover):</b> $${(mesasSeleccionadas.length * 40000).toLocaleString()} COP
+            `;
+            showView('pago');
+        }
+
+        function finalizarTodo() {
+            const nuevaReserva = { 
+                id: Date.now(), ...tempUser, mesas: [...mesasSeleccionadas], 
+                total: mesasSeleccionadas.length * 40000, status: 'Confirmada' 
+            };
+            db.push(nuevaReserva);
+            localStorage.setItem('pc_v3', JSON.stringify(db));
+            alert("✅ Pago Exitoso. Tus mesas están bloqueadas. ¡Nos vemos en PlanClub!");
+            mesasSeleccionadas = [];
+            showView('home');
+        }
+
+        function renderList() {
+            const container = document.getElementById('reserva-container');
+            if(db.length === 0) { container.innerHTML = "<p style='text-align:center;'>Sin reservas.</p>"; return; }
+            container.innerHTML = db.map(r => `
+                <div class="card" style="border-left: 4px solid var(--neon-cyan);">
+                    <small style="color:var(--neon-cyan);">RESERVA CONFIRMADA</small>
+                    <h4>Mesas: ${r.mesas.join(', ')}</h4>
+                    <p style="font-size:0.8rem; color:#aaa;">Fecha: ${r.fecha} • Total Pagado: $${r.total.toLocaleString()}</p>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
