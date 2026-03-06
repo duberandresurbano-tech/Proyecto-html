@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlanClub - Mapa</title>
+    <style>
+        :root { --neon-cyan: #00f3ff; --neon-purple: #bc13fe; --dark-bg: #050505; }
+        body { font-family: 'Lexend', sans-serif; background: var(--dark-bg); color: white; text-align: center; margin: 0; }
+        header { padding: 20px; border-bottom: 1px solid rgba(0, 243, 255, 0.2); }
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--neon-cyan); }
+        .layout { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; max-width: 350px; margin: 30px auto; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 20px; }
+        .dj { grid-column: span 3; background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple)); padding: 10px; border-radius: 8px; font-weight: bold; margin-bottom: 10px; }
+        .mesa { width: 80px; height: 80px; background: #1a1a1a; border: 2px solid #333; border-radius: 15px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; }
+        .mesa.ocupada { opacity: 0.3; cursor: not-allowed; border-color: red; color: red; }
+        .mesa.selected { border-color: var(--neon-cyan); box-shadow: 0 0 15px var(--neon-cyan); background: rgba(0,243,255,0.1); }
+        button { background: var(--neon-purple); color: white; border: none; padding: 15px 40px; border-radius: 12px; font-weight: bold; cursor: pointer; display: none; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <header><div class="logo">PLANCLUB</div></header>
+    <h3>Selecciona tu mesa</h3>
+    <div class="layout">
+        <div class="dj">DJ SET</div>
+        <div class="mesa" onclick="sel(this, 1)">M1</div>
+        <div class="mesa ocupada">M2</div>
+        <div class="mesa" onclick="sel(this, 3)">M3</div>
+        <div class="mesa" onclick="sel(this, 4)">M4</div>
+        <div class="mesa" onclick="sel(this, 5)">M5</div>
+        <div class="mesa ocupada">M6</div>
+    </div>
+    <div id="status"></div>
+    <button id="btn" onclick="pagar()">Confirmar Mesa</button>
+    <script>
+        let s = null;
+        function sel(el, n) {
+            document.querySelectorAll('.mesa').forEach(m => m.classList.remove('selected'));
+            el.classList.add('selected');
+            s = n;
+            document.getElementById('btn').style.display = "inline-block";
+            document.getElementById('status').innerText = "Mesa " + n + " seleccionada";
+        }
+        function pagar() {
+            let d = JSON.parse(localStorage.getItem('temp'));
+            d.mesa = s;
+            localStorage.setItem('temp', JSON.stringify(d));
+            window.location.href = "pago.html";
+        }
+    </script>
+</body>
+</html>
