@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlanClub - Sistema de Reservas Premium</title>
+    <style>
+        :root {
+            --neon-cyan: #00f3ff;
+            --neon-purple: #bc13fe;
+            --dark-bg: #050505;
+            --card-bg: rgba(255, 255, 255, 0.05);
+        }
+
+        body {
+            font-family: 'Lexend', sans-serif;
+            background-color: var(--dark-bg);
+            color: white;
+            margin: 0;
+            overflow-x: hidden;
+            background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+        }
+
+        /* Marca de agua de fondo */
+        .watermark-bg {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 8rem;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.02);
+            z-index: -1;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        header {
+            padding: 30px;
+            text-align: center;
+            border-bottom: 1px solid rgba(188, 19, 254, 0.3);
+            background: linear-gradient(to bottom, #111, transparent);
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--neon-cyan), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            text-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+        }
+
+        .container { max-width: 450px; margin: 20px auto; padding: 0 15px; }
+
+        /* Vistas */
+        .view { display: none; }
+        .view.active { display: block; animation: fadeIn 0.5s ease; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 25px;
+        }
+
+        input, button {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 12px;
+            border: 1px solid #333;
+            background: #111;
+            color: white;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+
+        button {
+            background: linear-gradient(90deg, #bc13fe, #7a12f5);
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(188, 19, 254, 0.4);
+            transition: 0.3s;
+        }
+
+        button:hover { transform: scale(1.02); opacity: 0.9; }
+
+        /* Estilos del Mapa */
+        .layout {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            background: rgba(0,0,0,0.3);
+            padding: 20px;
+            border-radius: 20px;
+        }
+
+        .dj {
+            grid-column: span 3;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple));
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+            color: black;
+        }
+
+        .mesa {
+            width: 80px;
+            height: 80px;
+            background: #1a1a1a;
+            border: 2px solid #333;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .mesa.ocupada { opacity: 0.2; cursor: not-allowed; border-color: #555; }
+        .mesa.selected { border-color: var(--neon-cyan); box-shadow: 0 0 15px var(--neon-cyan); background: rgba(0,243,255,0.1); }
+
+        .reserva-item {
+            background: rgba(255,255,255,0.03);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid var(--neon-cyan);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="watermark-bg">PLANCLUB</div>
+
+    <header>
+        <div class="logo">PLANCLUB</div>
+    </header>
+
+    <div class="container">
+        
+        <div id="view-inicio" class="view active">
+            <div class="card">
+                <h3>Nueva Reserva</h3>
+                <input type="text" id="nombre" placeholder="Nombre completo">
+                <input type="date" id="fecha">
+                <input type="number" id="personas" placeholder="Número de personas" min="1">
+                <button onclick="irAMapa()">Ver Disponibilidad</button>
+            </div>
+            <div class="card">
+                <h3>Mis Reservas Activas</h3>
+                <div id="lista-reservas"></div>
+            </div>
+        </div>
+
+        <div id="view-mapa" class="view">
+            <div class="card" style="text-align: center;">
+                <h3>Selecciona tu mesa</h3>
+                <div class="layout">
+                    <div class="dj">ESCENARIO / DJ</div>
+                    <div class="mesa" onclick="seleccionarMesa(this, 1)">M1</div>
+                    <div class="mesa ocupada">M2</div>
+                    <div class="mesa" onclick="seleccionarMesa(this, 3)">M3</div>
+                    <div class="mesa" onclick="seleccionarMesa(this, 4)">M4</div>
+                    <div class="mesa" onclick="seleccionarMesa(this, 5)">M5</div>
+                    <div class="mesa ocupada">M6</div>
+                </div>
+                <p id="mesa-status" style="margin-top: 15px; color: var(--neon-cyan);"></p>
+                <button id="btn-ir-a-pago" style="display:none;" onclick="irAPagar()">Confirmar Mesa</button>
+                <button style="background: #333; margin-top: 5px;" onclick="cambiarVista('inicio')">Volver</button>
+            </div>
+        </div>
+
+        <div id="view-pago" class="view">
+            <div class="card" style="text-align: center;">
+                <h2 style="color: var(--neon-purple);">Checkout Seguro</h2>
+                <div id="resumen-pago" style="text-align: left; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 12px; margin-bottom: 20px; font-size: 0.9rem;"></div>
+                <div id="total-pago" style="font-size: 1.8rem; font-weight: bold; color: var(--neon-cyan); margin-bottom: 20px;"></div>
+                <button onclick="confirmarPago()">PAGAR AHORA</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Variables globales del estado
+        let datosTemporales = {};
+        let reservasConfirmadas = JSON.parse(localStorage.getItem('reservas_planclub')) || [];
+
+        function cambiarVista(vistaId) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('view-' + vistaId).classList.add('active');
+        }
+
+        function irAMapa() {
+            const nombre = document.getElementById('nombre').value;
+            const fecha = document.getElementById('fecha').value;
+            const personas = document.getElementById('personas').value;
+
+            if (nombre && fecha && personas) {
+                datosTemporales = { nombre, fecha, personas };
+                cambiarVista('mapa');
+            } else {
+                alert("Por favor completa los datos de la reserva.");
+            }
+        }
+
+        function seleccionarMesa(elemento, numero) {
+            if (elemento.classList.contains('ocupada')) return;
+            
+            document.querySelectorAll('.mesa').forEach(m => m.classList.remove('selected'));
+            elemento.classList.add('selected');
+            
+            datosTemporales.mesa = numero;
+            document.getElementById('mesa-status').innerText = "Has seleccionado la Mesa #" + numero;
+            document.getElementById('btn-ir-a-pago').style.display = "block";
+        }
+
+        function irAPagar() {
+            const total = datosTemporales.personas * 30000; // Precio ficticio
+            document.getElementById('resumen-pago').innerHTML = `
+                <b>Cliente:</b> ${datosTemporales.nombre}<br>
+                <b>Fecha:</b> ${datosTemporales.fecha}<br>
+                <b>Personas:</b> ${datosTemporales.personas}<br>
+                <b>Ubicación:</b> Mesa #${datosTemporales.mesa}
+            `;
+            document.getElementById('total-pago').innerText = `$${total.toLocaleString()} COP`;
+            cambiarVista('pago');
+        }
+
+        function confirmarPago() {
+            alert("💸 Procesando pago... ¡Listo! Tu reserva en PlanClub está confirmada.");
+            
+            reservasConfirmadas.push({...datosTemporales});
+            localStorage.setItem('reservas_planclub', JSON.stringify(reservasConfirmadas));
+            
+            // Limpiar y volver al inicio
+            document.getElementById('nombre').value = '';
+            document.getElementById('fecha').value = '';
+            document.getElementById('personas').value = '';
+            actualizarListaInicio();
+            cambiarVista('inicio');
+        }
+
+        function actualizarListaInicio() {
+            const contenedor = document.getElementById('lista-reservas');
+            if (reservasConfirmadas.length === 0) {
+                contenedor.innerHTML = '<p style="color:#666; text-align:center">No hay planes activos.</p>';
+                return;
+            }
+            contenedor.innerHTML = reservasConfirmadas.map(res => `
+                <div class="reserva-item">
+                    <div>
+                        <b>${res.nombre}</b><br>
+                        <small>${res.fecha} | Mesa #${res.mesa}</small>
+                    </div>
+                    <span style="color: var(--neon-cyan); font-size: 0.8rem;">PAGADO ✅</span>
+                </div>
+            `).join('');
+        }
+
+        // Cargar lista al iniciar
+        actualizarListaInicio();
+    </script>
+</body>
+</html>
