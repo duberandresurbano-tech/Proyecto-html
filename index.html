@@ -32,7 +32,19 @@ min-height:100vh;
 overflow-x:hidden;
 }
 
-/* RUEDITA DE OPCIONES ESTILO NEÓN */
+.watermark-bg{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%) rotate(-30deg);
+font-size:8rem;
+font-weight:900;
+color:rgba(255,255,255,0.02);
+z-index:-1;
+pointer-events:none;
+}
+
+/* RUEDITA NEÓN */
 .settings-container {
     position: fixed;
     top: 20px;
@@ -57,10 +69,7 @@ overflow-x:hidden;
     box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
 }
 
-.btn-settings:hover { 
-    transform: rotate(90deg); 
-    box-shadow: 0 0 20px var(--neon-cyan);
-}
+.btn-settings:hover { transform: rotate(90deg); box-shadow: 0 0 20px var(--neon-cyan); }
 
 .settings-menu {
     position: absolute;
@@ -90,18 +99,6 @@ overflow-x:hidden;
 
 .settings-menu button:hover { background: rgba(0, 243, 255, 0.1); color: var(--neon-cyan); }
 
-.watermark-bg{
-position:fixed;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%) rotate(-30deg);
-font-size:8rem;
-font-weight:900;
-color:rgba(255,255,255,0.02);
-z-index:-1;
-pointer-events:none;
-}
-
 .app-container{
 width:100%;
 max-width:480px;
@@ -113,6 +110,7 @@ position:relative;
 
 header{ text-align:center; padding:40px 0 20px 0; }
 
+/* ANIMACIÓN DEL LOGO */
 .logo {
 font-size: 3rem;
 font-weight: 900;
@@ -122,7 +120,10 @@ background: linear-gradient(45deg, var(--neon-cyan), var(--neon-purple));
 margin: 0;
 filter: drop-shadow(0 0 10px rgba(0, 243, 255, 0.3));
 display: inline-block;
+transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+cursor: default;
 }
+.logo:hover { transform: scale(1.15); }
 
 .view{display:none;}
 .view.active{ display:block; animation:fadeIn .4s ease; }
@@ -218,7 +219,9 @@ margin:20px auto; border:1px solid rgba(255,255,255,0.2); padding:10px; backgrou
 </header>
 <button class="menu-btn" onclick="showView('form')"><span>✨ Nueva Reserva</span><span>→</span></button>
 <button class="menu-btn" onclick="showView('list')"><span>📅 Mis Reservas</span><span>→</span></button>
-<button class="menu-btn" style="border-color:#444;color:#888;margin-top:40px;background:rgba(0,0,0,0.5);" onclick="btnSalir()"><span>🚪 Salir de PlanClub</span><span>👋</span></button>
+<button class="menu-btn" style="margin-top:20px;" onclick="window.location.href='https://kenimarquines-cyber.github.io/INICIO/'">
+    <span>🏠 Volver al Inicio</span><span>→</span>
+</button>
 </div>
 
 <div id="view-form" class="view">
@@ -263,7 +266,6 @@ margin:20px auto; border:1px solid rgba(255,255,255,0.2); padding:10px; backgrou
 </div>
 
 <script>
-// LÓGICA ORIGINAL RESTAURADA
 let mesasSeleccionadas=[];
 let tempUser={};
 let dbReservas=JSON.parse(localStorage.getItem('planclub_db'))||[];
@@ -292,8 +294,6 @@ function showView(id){
         `;
     }
 }
-
-function btnSalir(){ alert("Cerrando sesión..."); }
 
 function selectPay(el){
     document.querySelectorAll('.metodo-pago').forEach(m=>m.classList.remove('active'));
@@ -356,12 +356,11 @@ function finalizarPago(){
 
 function renderList(){
     const container=document.getElementById('reserva-container');
-    if(dbReservas.length===0){ container.innerHTML="<p style='text-align:center;color:#888;'>No hay planes activos.</p>"; return; }
+    if(dbReservas.length===0){ container.innerHTML="<p style='text-align:center;'>No hay reservas.</p>"; return; }
     container.innerHTML=dbReservas.map(r=>`
         <div class="card" style="border-left:5px solid var(--neon-cyan);">
-            <small style="color:var(--neon-cyan);font-weight:bold;">RESERVA CONFIRMADA ✅</small>
-            <h4 style="margin:5px 0;">Mesas: ${r.mesas.join(', ')}</h4>
-            <p style="font-size:0.8rem;color:#888;margin:0;">A nombre de: ${r.nombre} • $${r.total.toLocaleString()}</p>
+            <h4>Mesas: ${r.mesas.join(', ')}</h4>
+            <p>${r.nombre} • $${r.total.toLocaleString()}</p>
         </div>
     `).join('');
 }
