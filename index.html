@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PlanClub - Premium Experience</title>
+
+<style>
+
+:root{
+--neon-cyan:#00f3ff;
+--neon-purple:#bc13fe;
+--dark-bg:#050505;
+
+--mesa-red:#ff3c3c;
+--mesa-yellow:#ffec3d;
+--mesa-orange:#ff913d;
+--mesa-blue:#3d9dff;
+--mesa-teal:#3dffec;
+}
+
+body{
+font-family:'Lexend',sans-serif;
+margin:0;
+color:white;
+display:flex;
+justify-content:center;
+
+/* FONDO CON planclub.jpg */
+background:
+linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.55)),
+url("planclub.png");
+
+background-size:cover;
+background-position:center;
+background-attachment:fixed;
+
+min-height:100vh;
+overflow-x:hidden;
+}
+
+.watermark-bg{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%) rotate(-30deg);
+font-size:8rem;
+font-weight:900;
+color:rgba(255,255,255,0.02);
+z-index:-1;
+pointer-events:none;
+}
+
+.app-container{
+width:100%;
+max-width:480px;
+min-height:100vh;
+padding:20px;
+box-sizing:border-box;
+position:relative;
+backdrop-filter:blur(2px);
+}
+
+header{
+text-align:center;
+padding:40px 0 20px 0;
+}
+
+/* -------- LOGO DE TEXTO RESTAURADO -------- */
+
+.logo {
+font-size: 3rem;
+font-weight: 900;
+background: linear-gradient(45deg, var(--neon-cyan), var(--neon-purple));
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+margin: 0;
+filter: drop-shadow(0 0 10px rgba(0, 243, 255, 0.3));
+display: inline-block;
+transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Transición suave */
+cursor: default;
+}
+
+.logo:hover {
+transform: scale(1.15); /* Se hace más grande al pasar el mouse */
+}
+
+/* ------------------------------------------- */
+
+.view{display:none;}
+.view.active{
+display:block;
+animation:fadeIn .4s ease;
+}
+
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(15px);}
+to{opacity:1;transform:translateY(0);}
+}
+
+.menu-btn{
+background:rgba(255,255,255,0.1);
+border:1px solid rgba(255,255,255,0.1);
+color:white;
+padding:25px;
+margin:15px 0;
+border-radius:20px;
+width:100%;
+font-size:1.2rem;
+font-weight:bold;
+cursor:pointer;
+display:flex;
+align-items:center;
+justify-content:space-between;
+transition:.3s;
+backdrop-filter:blur(10px);
+}
+
+.menu-btn:hover{
+border-color:var(--neon-cyan);
+background:rgba(255,255,255,0.2);
+transform:translateY(-3px);
+}
+
+.card{
+background:rgba(0,0,0,0.85);
+padding:25px;
+border-radius:20px;
+border:1px solid rgba(255,255,255,0.1);
+backdrop-filter:blur(10px);
+margin-bottom:20px;
+}
+
+input,.btn-action{
+width:100%;
+padding:18px;
+margin:10px 0;
+border-radius:14px;
+border:1px solid #333;
+background:#0d0d0d;
+color:white;
+box-sizing:border-box;
+}
+
+.btn-action{
+background:linear-gradient(90deg,var(--neon-purple),#7a12f5);
+border:none;
+font-weight:bold;
+cursor:pointer;
+box-shadow:0 4px 15px rgba(188,19,254,0.4);
+}
+
+.btn-back{
+background:none;
+border:none;
+color:var(--neon-cyan);
+cursor:pointer;
+margin-bottom:15px;
+}
+
+/* plano */
+
+.plano-container{
+margin:20px auto;
+border:2px solid white;
+padding:10px;
+background:rgba(0,0,0,0.9);
+border-radius:10px;
+max-width:380px;
+}
+
+.grid-layout{
+display:grid;
+grid-template-columns:repeat(6,1fr);
+grid-template-rows:repeat(8,45px);
+gap:8px;
+}
+
+.dj-set{
+grid-row:span 2;
+grid-column:3 / 5;
+background:#111;
+border:1px solid #444;
+border-radius:8px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:.8rem;
+}
+
+.mesa{
+border-radius:8px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:.7rem;
+font-weight:bold;
+color:black;
+cursor:pointer;
+transition:.2s;
+}
+
+.mesa.selected{
+transform:scale(1.15);
+box-shadow:0 0 15px white;
+border:2px solid white;
+z-index:5;
+}
+
+.m-r{background:var(--mesa-red);}
+.m-y{background:var(--mesa-yellow);}
+.m-o{background:var(--mesa-orange);}
+.m-b{background:var(--mesa-blue);}
+.m-t{background:var(--mesa-teal);}
+
+/* pagos */
+
+.metodo-pago{
+background:#0d0d0d;
+border:1px solid #333;
+padding:18px;
+border-radius:15px;
+margin:12px 0;
+display:flex;
+align-items:center;
+cursor:pointer;
+transition:.3s;
+}
+
+.metodo-pago.active{
+border-color:var(--neon-cyan);
+background:rgba(0,243,255,0.08);
+box-shadow:0 0 10px rgba(0,243,255,0.2);
+}
+
+.metodo-pago input{
+margin-right:15px;
+accent-color:var(--neon-cyan);
+width:20px;
+height:20px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="watermark-bg">PLANCLUB</div>
+
+<div class="app-container">
+
+<div id="view-home" class="view active">
+
+<header>
+
+<div class="logo">PLANCLUB</div>
+
+<p style="color:#aaa;letter-spacing:2px; margin-top: 10px;">EXCLUSIVE ACCESS</p>
+
+</header>
+
+<button class="menu-btn" onclick="showView('form')">
+<span>✨ Nueva Reserva</span><span>→</span>
+</button>
+
+<button class="menu-btn" onclick="showView('list')">
+<span>📅 Mis Reservas</span><span>→</span>
+</button>
+
+<button class="menu-btn" style="border-color:#444;color:#888;margin-top:40px;background:rgba(0,0,0,0.5);" onclick="btnSalir()">
+<span>🚪 Volver al inicio </span><span>🏠</span>
+</button>
+
+</div>
+
+<div id="view-form" class="view">
+
+<button class="btn-back" onclick="showView('home')">← Volver al Inicio</button>
+
+<div class="card">
+
+<h3>Tus Datos</h3>
+
+<input type="text" id="nombre" placeholder="Nombre completo">
+
+<input type="date" id="fecha">
+
+<input type="number" id="personas" placeholder="Cantidad de personas">
+
+<button class="btn-action" onclick="confirmarDatos()">
+Ver Disponibilidad
+</button>
+
+</div>
+</div>
+
+<div id="view-map" class="view">
+
+<button class="btn-back" onclick="showView('form')">
+← Editar Datos
+</button>
+
+<div style="text-align:center;">
+<small>Puedes seleccionar varias mesas</small>
+</div>
+
+<div class="plano-container">
+<div class="grid-layout" id="mapa-grid"></div>
+</div>
+
+<div id="map-info" class="card" style="display:none;text-align:center;">
+<p id="txt-mesas" style="color:var(--neon-cyan);font-weight:bold;"></p>
+<h2 id="txt-total"></h2>
+<button class="btn-action" onclick="showView('pago')">
+Proceder al Pago
+</button>
+</div>
+
+</div>
+
+<div id="view-pago" class="view">
+
+<button class="btn-back" onclick="showView('map')">
+← Cambiar Mesas
+</button>
+
+<div class="card">
+
+<h2 style="color:var(--neon-purple);text-align:center;">
+Finalizar Compra
+</h2>
+
+<div id="resumen-pago" style="font-size:.9rem;border-bottom:1px solid #333;padding-bottom:15px;margin-bottom:15px;"></div>
+
+<p>Elige tu método de pago:</p>
+
+<div class="metodo-pago active" onclick="selectPay(this)">
+<input type="radio" name="pay" checked>
+💳 Tarjeta de Crédito / Débito
+</div>
+
+<div class="metodo-pago" onclick="selectPay(this)">
+<input type="radio" name="pay">
+📱 Nequi / Daviplata
+</div>
+
+<div class="metodo-pago" onclick="selectPay(this)">
+<input type="radio" name="pay">
+🏦 PSE (Cuentas de Ahorro)
+</div>
+
+<button class="btn-action" style="background:var(--neon-cyan);color:black;margin-top:20px;" onclick="finalizarPago()">
+CONFIRMAR Y PAGAR
+</button>
+
+</div>
+</div>
+
+<div id="view-list" class="view">
+
+<button class="btn-back" onclick="showView('home')">
+← Menú Principal
+</button>
+
+<div id="reserva-container"></div>
+
+</div>
+
+</div>
+
+<script>
+
+let mesasSeleccionadas=[];
+let tempUser={};
+let dbReservas=JSON.parse(localStorage.getItem('planclub_db'))||[];
+
+function showView(id){
+
+document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+
+document.getElementById('view-'+id).classList.add('active');
+
+if(id==='map')renderMapa();
+
+if(id==='list')renderList();
+
+if(id==='pago'){
+
+document.getElementById('resumen-pago').innerHTML=`
+
+<b>Cliente:</b> ${tempUser.nombre}<br>
+
+<b>Mesas:</b> ${mesasSeleccionadas.join(', ')}<br>
+
+<b>Total Cover ($40k c/u):</b> $${(mesasSeleccionadas.length*40000).toLocaleString()} COP
+
+`;
+
+}
+
+}
+
+function btnSalir(){
+
+const frases=[
+
+"¿Tan rápido? El DJ apenas está calentando. 🔥",
+
+"¡Cuidado al salir! La calle está fría, el club no. 🧊",
+
+"Tu reserva de PlanClub te estará esperando. 💸",
+
+"Ok, ve a descansar... la fiesta sigue aquí. 🎧"
+
+];
+
+alert(frases[Math.floor(Math.random()*frases.length)]);
+
+}
+
+function selectPay(el){
+
+document.querySelectorAll('.metodo-pago').forEach(m=>m.classList.remove('active'));
+
+el.classList.add('active');
+
+el.querySelector('input').checked=true;
+
+}
+
+function confirmarDatos(){
+
+const n=document.getElementById('nombre').value;
+
+const f=document.getElementById('fecha').value;
+
+const p=document.getElementById('personas').value;
+
+if(n&&f&&p){
+
+tempUser={nombre:n,fecha:f,personas:p};
+
+showView('map');
+
+}else alert("Por favor, ingresa tus datos.");
+
+}
+
+const configMesas=[
+
+{id:1,c:'m-r',g:'grid-row:8;grid-column:1;'},
+
+{id:2,c:'m-r',g:'grid-row:7;grid-column:1;'},
+
+{id:3,c:'m-r',g:'grid-row:6;grid-column:1;'},
+
+{id:4,c:'m-y',g:'grid-row:5;grid-column:1;'},
+
+{id:5,c:'m-y',g:'grid-row:4;grid-column:1;'},
+
+{id:6,c:'m-y',g:'grid-row:3;grid-column:1;'},
+
+{id:7,c:'m-y',g:'grid-row:2;grid-column:1;'},
+
+{id:8,c:'m-y',g:'grid-row:2;grid-column:2;'},
+
+{id:9,c:'m-y',g:'grid-row:2;grid-column:3;'},
+
+{id:10,c:'m-y',g:'grid-row:2;grid-column:4;'},
+
+{id:11,c:'m-y',g:'grid-row:2;grid-column:5;'},
+
+{id:12,c:'m-y',g:'grid-row:2;grid-column:6;'},
+
+{id:13,c:'m-y',g:'grid-row:3;grid-column:6;'},
+
+{id:14,c:'m-y',g:'grid-row:4;grid-column:6;'},
+
+{id:15,c:'m-r',g:'grid-row:5;grid-column:6;'},
+
+{id:16,c:'m-r',g:'grid-row:6;grid-column:6;'},
+
+{id:17,c:'m-r',g:'grid-row:7;grid-column:6;'},
+
+{id:18,c:'m-o',g:'grid-row:4;grid-column:2;'},
+
+{id:19,c:'m-o',g:'grid-row:4;grid-column:5;'},
+
+{id:20,c:'m-b',g:'grid-row:5;grid-column:3;'},
+
+{id:30,c:'m-b',g:'grid-row:5;grid-column:4;'},
+
+{id:100,c:'m-t',g:'grid-row:6;grid-column:3;'},
+
+{id:101,c:'m-t',g:'grid-row:6;grid-column:4;'}
+
+];
+
+function renderMapa(){
+
+const grid=document.getElementById('mapa-grid');
+
+grid.innerHTML='<div class="dj-set">DJ</div>';
+
+configMesas.forEach(m=>{
+
+const div=document.createElement('div');
+
+div.className=`mesa ${m.c} ${mesasSeleccionadas.includes(m.id)?'selected':''}`;
+
+div.style=m.g;
+
+div.innerText=m.id;
+
+div.onclick=()=>{
+
+if(mesasSeleccionadas.includes(m.id))
+
+mesasSeleccionadas=mesasSeleccionadas.filter(i=>i!==m.id);
+
+else mesasSeleccionadas.push(m.id);
+
+renderMapa();
+
+};
+
+grid.appendChild(div);
+
+});
+
+const info=document.getElementById('map-info');
+
+if(mesasSeleccionadas.length>0){
+
+info.style.display="block";
+
+document.getElementById('txt-mesas').innerText="Mesas: "+mesasSeleccionadas.join(', ');
+
+document.getElementById('txt-total').innerText="$"+(mesasSeleccionadas.length*40000).toLocaleString()+" COP";
+
+}else info.style.display="none";
+
+}
+
+function finalizarPago(){
+
+alert("¡Mesa reservada con éxito! 🥂 Alista la pinta, nos vemos en la noche.");
+
+dbReservas.push({
+
+id:Date.now(),
+
+...tempUser,
+
+mesas:[...mesasSeleccionadas],
+
+total:mesasSeleccionadas.length*40000
+
+});
+
+localStorage.setItem('planclub_db',JSON.stringify(dbReservas));
+
+mesasSeleccionadas=[];
+
+showView('home');
+
+}
+
+function renderList(){
+
+const container=document.getElementById('reserva-container');
+
+if(dbReservas.length===0){
+
+container.innerHTML="<p style='text-align:center;color:#888;'>No hay planes activos todavía. 🥂</p>";
+
+return;
+
+}
+
+container.innerHTML=dbReservas.map(r=>`
+
+<div class="card" style="border-left:5px solid var(--neon-cyan);">
+
+<small style="color:var(--neon-cyan);font-weight:bold;">
+
+RESERVA CONFIRMADA ✅
+
+</small>
+
+<h4 style="margin:5px 0;">
+
+Mesas: ${r.mesas.join(', ')}
+
+</h4>
+
+<p style="font-size:0.8rem;color:#888;margin:0;">
+
+A nombre de: ${r.nombre} • $${r.total.toLocaleString()}
+
+</p>
+
+</div>
+
+`).join('');
+
+}
+
+</script>
+
+</body>
+</html>
