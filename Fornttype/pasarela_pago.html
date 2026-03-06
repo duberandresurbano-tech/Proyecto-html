@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlanClub - Checkout</title>
+    <style>
+        :root { --neon-purple: #bc13fe; --dark-bg: #050505; }
+        body { font-family: 'Lexend', sans-serif; background: var(--dark-bg); color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: rgba(255,255,255,0.05); padding: 40px; border-radius: 25px; border: 1px solid var(--neon-purple); text-align: center; width: 320px; }
+        .logo { font-size: 2rem; font-weight: 800; color: var(--neon-purple); margin-bottom: 20px; }
+        .resumen { text-align: left; background: #111; padding: 15px; border-radius: 12px; font-size: 0.9rem; margin: 20px 0; border: 1px solid #333; }
+        button { width: 100%; padding: 15px; background: var(--neon-purple); border: none; color: white; border-radius: 12px; font-weight: bold; cursor: pointer; }
+        .price { font-size: 1.5rem; margin-bottom: 20px; color: #00f3ff; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="logo">PLANCLUB</div>
+        <h3>Checkout Seguro</h3>
+        <div class="resumen" id="res"></div>
+        <div class="price" id="total"></div>
+        <button onclick="fin()">PAGAR AHORA</button>
+    </div>
+    <script>
+        const d = JSON.parse(localStorage.getItem('temp'));
+        const t = d.personas * 25000;
+        document.getElementById('res').innerHTML = `Cliente: ${d.nombre}<br>Mesa: #${d.mesa}<br>Personas: ${d.personas}`;
+        document.getElementById('total').innerText = `$${t.toLocaleString()} COP`;
+
+        function fin() {
+            alert("💸 Pago procesado por PlanClub");
+            let res = JSON.parse(localStorage.getItem('reservas')) || [];
+            res.push(d);
+            localStorage.setItem('reservas', JSON.stringify(res));
+            localStorage.removeItem('temp');
+            window.location.href = "index.html";
+        }
+    </script>
+</body>
+</html>
