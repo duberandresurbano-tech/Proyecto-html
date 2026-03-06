@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlanClub - Inicio</title>
+    <style>
+        :root { --neon-cyan: #00f3ff; --neon-purple: #bc13fe; --dark-bg: #050505; --card-bg: rgba(255, 255, 255, 0.05); }
+        body { font-family: 'Lexend', sans-serif; background-color: var(--dark-bg); color: white; margin: 0; background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png'); }
+        .watermark-bg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg); font-size: 8rem; font-weight: 900; color: rgba(255, 255, 255, 0.02); z-index: -1; pointer-events: none; }
+        header { padding: 30px; text-align: center; border-bottom: 1px solid rgba(188, 19, 254, 0.3); }
+        .logo { font-size: 2.5rem; font-weight: 800; background: linear-gradient(45deg, var(--neon-cyan), var(--neon-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; }
+        .container { max-width: 450px; margin: 20px auto; padding: 0 15px; }
+        .card { background: var(--card-bg); backdrop-filter: blur(10px); padding: 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 25px; }
+        input, button { width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: 1px solid #333; background: #111; color: white; box-sizing: border-box; }
+        button { background: linear-gradient(90deg, #bc13fe, #7a12f5); border: none; font-weight: bold; cursor: pointer; box-shadow: 0 5px 15px rgba(188, 19, 254, 0.4); }
+        .reserva-item { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; border-left: 4px solid var(--neon-cyan); }
+    </style>
+</head>
+<body>
+    <div class="watermark-bg">PLANCLUB</div>
+    <header><div class="logo">PLANCLUB</div></header>
+    <div class="container">
+        <div class="card">
+            <h3>Nueva Reserva</h3>
+            <input type="text" id="nombre" placeholder="Nombre completo">
+            <input type="date" id="fecha">
+            <input type="number" id="personas" placeholder="Número de personas" min="1">
+            <button onclick="irAMapa()">Ver Disponibilidad</button>
+        </div>
+        <div class="card">
+            <h3>Mis Reservas Activas</h3>
+            <div id="lista"></div>
+        </div>
+    </div>
+    <script>
+        function irAMapa() {
+            const nombre = document.getElementById('nombre').value;
+            const fecha = document.getElementById('fecha').value;
+            const personas = document.getElementById('personas').value;
+            if(nombre && fecha && personas) {
+                localStorage.setItem('temp', JSON.stringify({nombre, fecha, personas}));
+                window.location.href = "mapa.html";
+            } else { alert("Llena todos los campos"); }
+        }
+        function cargar() {
+            const reservas = JSON.parse(localStorage.getItem('reservas')) || [];
+            document.getElementById('lista').innerHTML = reservas.map(r => `
+                <div class="reserva-item">
+                    <div><b>${r.nombre}</b><br><small>${r.fecha} - Mesa #${r.mesa}</small></div>
+                    <span style="color:var(--neon-cyan)">✅</span>
+                </div>
+            `).join('') || '<p style="color:#666;text-align:center">No hay planes.</p>';
+        }
+        cargar();
+    </script>
+</body>
+</html>
