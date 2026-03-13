@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PlanClub - Premium Experience</title>
+
+<style>
+/* ============================================================
+   1. VARIABLES DE DISEÑO
+   ============================================================ */
+:root {
+    --neon-cyan: #00f3ff;
+    --champagne-main: #f3e5ab;
+    --champagne-bright: #ffffff;
+    --champagne-dark: #b89b5e;
+    --gold-gradient: linear-gradient(45deg, #c8a74d, #f5d76e);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Lexend', sans-serif;
+}
+
+/* ============================================================
+   2. CUERPO (Fondo y Estética)
+   ============================================================ */
+body {
+    margin: 0;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; 
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8)), url("planclub2.png");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    min-height: 100vh;
+    overflow-x: hidden;
+    padding-top: 40px;
+}
+
+/* ============================================================
+   3. LOGO (Imagen y Texto con Brillo)
+   ============================================================ */
+.logo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 40px;
+    z-index: 5;
+}
+
+.logo-image {
+    width: 180px;
+    height: auto;
+    margin-bottom: 10px;
+    filter: drop-shadow(0 0 15px rgba(184, 155, 94, 0.6));
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.logo {
+    font-size: 3rem;
+    font-weight: 900;
+    background: linear-gradient(to right, 
+        var(--champagne-dark) 0%, 
+        var(--champagne-main) 25%, 
+        var(--champagne-bright) 50%, 
+        var(--champagne-main) 75%, 
+        var(--champagne-dark) 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-transform: uppercase;
+    letter-spacing: -1px;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+    transition: background-position 0.6s ease, filter 0.4s ease;
+}
+
+.logo-container:hover .logo-image { transform: scale(1.1); }
+.logo-container:hover .logo { 
+    background-position: right center; 
+    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.5));
+}
+
+/* ============================================================
+   4. BOTONES
+   ============================================================ */
+.btn {
+    width: 250px;
+    padding: 18px;
+    margin: 12px;
+    border: none;
+    border-radius: 40px;
+    background: var(--gold-gradient);
+    color: black;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+    text-transform: uppercase;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px rgba(245, 215, 110, 0.5);
+}
+
+/* ============================================================
+   5. PANELES
+   ============================================================ */
+.panel {
+    position: fixed;
+    bottom: -100%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.96);
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 100;
+}
+
+.panel.active { bottom: 0; }
+
+.input-group {
+    width: 90%;
+    max-width: 320px;
+    margin-bottom: 15px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 15px;
+    border-radius: 15px;
+    border: 1px solid #333;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 16px;
+    text-align: center;
+    outline: none;
+}
+
+/* Texto de ayuda para contraseña */
+.password-hint {
+    font-size: 11px;
+    color: #888;
+    margin-bottom: 15px;
+    max-width: 280px;
+    line-height: 1.4;
+}
+
+.msg {
+    margin-top: 15px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.close {
+    margin-top: 30px;
+    color: #888;
+    cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+    <div class="logo-container">
+        <img src="Logo.png" alt="Logo" class="logo-image">
+        <div class="logo">PLANCLUB</div>
+    </div>
+
+    <div class="view active">
+        <button class="btn" onclick="showPanel('loginPanel')">INICIAR SESIÓN</button>
+        <br>
+        <button class="btn" onclick="showPanel('registerPanel')">REGISTRARSE</button>
+    </div>
+
+    <div class="panel" id="loginPanel">
+        <h2 style="margin-bottom: 20px; color: var(--champagne-main)">BIENVENIDO</h2>
+        <div class="input-group"><input type="text" id="loginUser" placeholder="Usuario"></div>
+        <div class="input-group"><input type="password" id="loginPass" placeholder="Contraseña"></div>
+        <button class="btn" onclick="validarLogin()">ENTRAR</button>
+        <div id="loginMsg" class="msg"></div>
+        <div class="close" onclick="hidePanels()">VOLVER</div>
+    </div>
+
+    <div class="panel" id="registerPanel">
+        <h2 style="margin-bottom: 20px; color: var(--champagne-main)">NUEVA CUENTA</h2>
+        <div class="input-group"><input type="text" id="regUser" placeholder="Crea un Usuario"></div>
+        <div class="input-group"><input type="password" id="regPass" placeholder="Crea una Contraseña"></div>
+        
+        <p class="password-hint">La contraseña debe tener al menos 8 caracteres, una letra mayúscula y un número.</p>
+        
+        <button class="btn" onclick="guardarRegistro()">REGISTRARME</button>
+        <div id="regMsg" class="msg"></div>
+        <div class="close" onclick="hidePanels()">CANCELAR</div>
+    </div>
+
+    <script>
+        /* ============================================================
+           6. LÓGICA DE PROGRAMACIÓN
+           ============================================================ */
+
+        function showPanel(id) {
+            document.getElementById(id).classList.add('active');
+            document.getElementById('loginMsg').innerText = ""; 
+            document.getElementById('regMsg').innerText = "";   
+        }
+
+        function hidePanels() {
+            const panels = document.querySelectorAll('.panel');
+            panels.forEach(p => p.classList.remove('active'));
+        }
+
+        // --- LÓGICA DE REGISTRO CON REGLAS DE SEGURIDAD ---
+        function guardarRegistro() {
+            const user = document.getElementById('regUser').value.trim();
+            const pass = document.getElementById('regPass').value.trim();
+            const msg = document.getElementById('regMsg');
+
+            // 1. Validar campos vacíos
+            if (!user || !pass) {
+                msg.style.color = "#ff4d4d"; 
+                msg.innerText = "Por favor, completa los campos";
+                return;
+            }
+
+            // 2. VALIDACIÓN: Usuario ya registrado
+            const savedUser = localStorage.getItem('pc_user');
+            if (savedUser && user.toLowerCase() === savedUser) {
+                msg.style.color = "#ffcc00";
+                msg.innerText = "Usuario ya registrado";
+                return;
+            }
+
+            // 3. VALIDACIÓN: Estándar de Contraseña Segura
+            // Expresión regular: Mínimo 8 caracteres, al menos una mayúscula y un número
+            const passRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+            
+            if (!passRegex.test(pass)) {
+                msg.style.color = "#ff4d4d";
+                msg.innerText = "La contraseña no cumple los requisitos de seguridad";
+                return;
+            }
+
+            // 4. Guardar datos
+            localStorage.setItem('pc_user', user.toLowerCase());
+            localStorage.setItem('pc_pass', pass); // Las contraseñas suelen ser sensibles a mayúsculas, pero el usuario no.
+            
+            msg.style.color = "#4dff88"; 
+            msg.innerText = "¡Usuario registrado con éxito!";
+            setTimeout(hidePanels, 1500);
+        }
+
+        // --- LÓGICA DE LOGIN ---
+        function validarLogin() {
+            const userIn = document.getElementById('loginUser').value.trim().toLowerCase();
+            const passIn = document.getElementById('loginPass').value.trim();
+            const msg = document.getElementById('loginMsg');
+            
+            const savedUser = localStorage.getItem('pc_user');
+            const savedPass = localStorage.getItem('pc_pass');
+
+            if (!userIn || !passIn) {
+                msg.style.color = "#ffcc00"; 
+                msg.innerText = "Digita tus datos";
+                return;
+            }
+
+            if (savedUser === null || userIn !== savedUser) {
+                msg.style.color = "#ff4d4d";
+                msg.innerText = "Este usuario no está registrado";
+                return;
+            }
+
+            // Nota: La contraseña en el login se compara exactamente como se guardó (sensible a mayúsculas)
+            if (passIn === savedPass) {
+                msg.style.color = "#4dff88"; 
+                msg.innerText = "Usuario correcto ingresando.";
+            } else {
+                msg.style.color = "#ff4d4d"; 
+                msg.innerText = "Usuario/contraseña incorrectos";
+            }
+        }
+    </script>
+</body>
+</html>

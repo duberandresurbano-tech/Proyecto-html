@@ -24,7 +24,7 @@ color:white;
 display:flex;
 justify-content:center;
 /* FONDO RESTAURADO */
-background: linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)), url("planclub.png");
+background: linear-gradient(rgba(0, 0, 0, 0.37),rgba(0,0,0,0.6)), url("planclub2.png");
 background-size:cover;
 background-position:center;
 background-attachment:fixed;
@@ -53,7 +53,7 @@ pointer-events:none;
 }
 
 .btn-settings {
-    background: rgba(0, 243, 255, 0.1);
+    background: rgba(0, 0, 0, 0);
     border: 2px solid var(--neon-cyan);
     color: var(--neon-cyan);
     font-size: 1.5rem;
@@ -111,6 +111,11 @@ position:relative;
 header{ text-align:center; padding:40px 0 20px 0; }
 
 /* ANIMACIÓN DEL LOGO */
+@keyframes flotar {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
 .logo {
 font-size: 3rem;
 font-weight: 900;
@@ -131,6 +136,10 @@ cursor: default;
 @keyframes fadeIn{
 from{opacity:0;transform:translateY(15px);}
 to{opacity:1;transform:translateY(0);}
+}
+.logo 
+{
+  animation: flotar 3s ease-in-out infinite;
 }
 
 .menu-btn{
