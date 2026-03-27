@@ -6,6 +6,7 @@
 <title>PlanClub - Premium Experience</title>
 
 <style>
+/* LÍNEAS 12-21: Definición de variables de color (Neón y estados de mesas) */
 :root{
 --neon-cyan:#46d2da;
 --neon-purple:#bc13fe;
@@ -17,13 +18,13 @@
 --mesa-teal:#3dffec;
 }
 
+/* LÍNEAS 23-35: Estilos base del cuerpo y fondo con imagen degradada */
 body{
 font-family:'Lexend',sans-serif;
 margin:0;
 color:rgb(255, 255, 255);
 display:flex;
 justify-content:center;
-/* FONDO RESTAURADO */
 background: linear-gradient(rgba(0, 0, 0, 0.37),rgba(0,0,0,0.6)), url("planclub2.png");
 background-size:cover;
 background-position:center;
@@ -32,6 +33,7 @@ min-height:100vh;
 overflow-x:hidden;
 }
 
+/* LÍNEAS 37-46: Marca de agua decorativa de fondo */
 .watermark-bg{
 position:fixed;
 top:50%;
@@ -44,7 +46,7 @@ z-index:-1;
 pointer-events:none;
 }
 
-/* RUEDITA NEÓN */
+/* LÍNEAS 49-74: Contenedor y botón de configuración (Ruedita neón) */
 .settings-container {
     position: fixed;
     top: 20px;
@@ -71,6 +73,7 @@ pointer-events:none;
 
 .btn-settings:hover { transform: rotate(90deg); box-shadow: 0 0 20px var(--neon-cyan); }
 
+/* LÍNEAS 76-88: Menú desplegable de configuración */
 .settings-menu {
     position: absolute;
     top: 55px;
@@ -99,6 +102,7 @@ pointer-events:none;
 
 .settings-menu button:hover { background: rgba(0, 243, 255, 0.1); color: var(--neon-cyan); }
 
+/* LÍNEAS 90-100: Contenedor principal de la aplicación móvil */
 .app-container{
 width:100%;
 max-width:480px;
@@ -110,7 +114,7 @@ position:relative;
 
 header{ text-align:center; padding:40px 0 20px 0; }
 
-/* ANIMACIÓN DEL LOGO */
+/* LÍNEAS 104-118: Animación y diseño del logo PLANCLUB */
 @keyframes flotar {
   0% { transform: translateY(0px); }
   50% { transform: translateY(-10px); }
@@ -127,9 +131,11 @@ filter: drop-shadow(0 0 10px rgba(0, 243, 255, 0.3));
 display: inline-block;
 transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 cursor: default;
+animation: flotar 3s ease-in-out infinite;
 }
 .logo:hover { transform: scale(1.15); }
 
+/* LÍNEAS 125-131: Manejo de visibilidad de pantallas (Views) */
 .view{display:none;}
 .view.active{ display:block; animation:fadeIn .4s ease; }
 
@@ -137,11 +143,8 @@ cursor: default;
 from{opacity:0;transform:translateY(15px);}
 to{opacity:1;transform:translateY(0);}
 }
-.logo 
-{
-  animation: flotar 3s ease-in-out infinite;
-}
 
+/* LÍNEAS 138-154: Estilo de los botones principales del menú */
 .menu-btn{
 background:rgba(255,255,255,0.08);
 border:1px solid rgba(255,255,255,0.1);
@@ -162,6 +165,7 @@ backdrop-filter:blur(10px);
 
 .menu-btn:hover{ border-color:var(--neon-cyan); background:rgba(255,255,255,0.15); transform:translateY(-3px); }
 
+/* LÍNEAS 158-165: Tarjetas de contenido translúcidas */
 .card{
 background:rgba(0,0,0,0.85);
 padding:25px;
@@ -171,6 +175,7 @@ backdrop-filter:blur(15px);
 margin-bottom:20px;
 }
 
+/* LÍNEAS 167-183: Inputs y botones de acción (Gradiente Púrpura) */
 input,.btn-action{
 width:100%;
 padding:18px;
@@ -192,6 +197,7 @@ color: white;
 
 .btn-back{ background:none; border:none; color:var(--neon-cyan); cursor:pointer; margin-bottom:15px; font-weight: bold; font-size: 1rem;}
 
+/* LÍNEAS 186-200: Diseño del plano de mesas (Grid interactivo) */
 .plano-container{
 margin:20px auto; border:1px solid rgba(255,255,255,0.2); padding:10px; background:rgba(0,0,0,0.9); border-radius:15px; max-width:380px;
 }
@@ -238,7 +244,7 @@ margin:20px auto; border:1px solid rgba(255,255,255,0.2); padding:10px; backgrou
 <h3>Tus Datos</h3>
 <input type="text" id="nombre" placeholder="Nombre completo">
 <input type="date" id="fecha">
-<input type="number" id="personas" placeholder="Cantidad de personas">
+<input type="number" id="personas" placeholder="Cantidad de personas" min="1" max="10">
 <button class="btn-action" onclick="confirmarDatos()">Ver Disponibilidad</button>
 </div>
 </div>
@@ -274,10 +280,12 @@ margin:20px auto; border:1px solid rgba(255,255,255,0.2); padding:10px; backgrou
 </div>
 
 <script>
+// LÍNEAS 290-293: Variables globales para el estado de la reserva y persistencia
 let mesasSeleccionadas=[];
 let tempUser={};
 let dbReservas=JSON.parse(localStorage.getItem('planclub_db'))||[];
 
+// LÍNEAS 295-303: Funciones para manejar el menú de configuración
 function toggleSettings() {
     const menu = document.getElementById('settings-menu');
     menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
@@ -289,6 +297,7 @@ window.onclick = function(event) {
     }
 }
 
+// LÍNEAS 305-321: Función principal para navegar entre las vistas de la App
 function showView(id){
     document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
     document.getElementById('view-'+id).classList.add('active');
@@ -303,20 +312,56 @@ function showView(id){
     }
 }
 
+// LÍNEAS 323-327: Selección visual del método de pago
 function selectPay(el){
     document.querySelectorAll('.metodo-pago').forEach(m=>m.classList.remove('active'));
     el.classList.add('active');
     el.querySelector('input').checked=true;
 }
 
+// LÍNEAS 329-365: VALIDACIÓN DE DATOS (ESTRICTA PARA FECHA Y PERSONAS)
 function confirmarDatos(){
-    const n=document.getElementById('nombre').value;
-    const f=document.getElementById('fecha').value;
-    const p=document.getElementById('personas').value;
-    if(n&&f&&p){ tempUser={nombre:n,fecha:f,personas:p}; showView('map'); }
-    else alert("Por favor, completa tus datos.");
+    const n = document.getElementById('nombre').value;
+    const f = document.getElementById('fecha').value;
+    const p = document.getElementById('personas').value;
+    
+    // Validamos que los campos no estén vacíos
+    if(!n || !f || !p){
+        alert("Por favor, completa todos tus datos.");
+        return;
+    }
+
+    // Lógica para comparar la fecha seleccionada contra hoy
+    const fechaSeleccionada = new Date(f + 'T00:00:00'); // Formato local sin desfase
+    const hoy = new Date();
+    hoy.setHours(0,0,0,0); // Solo comparamos el día
+
+    // VALIDACIÓN 1: No permitir pasado
+    if(fechaSeleccionada < hoy){
+        alert("No puedes reservar para el pasado, bro.");
+        return;
+    }
+
+    // VALIDACIÓN 2: Límite de 3 meses a futuro
+    const limiteFuturo = new Date();
+    limiteFuturo.setMonth(hoy.getMonth() + 3);
+    if(fechaSeleccionada > limiteFuturo){
+        alert("Lo sentimos, solo permitimos reservas con 3 meses de anticipación.");
+        return;
+    }
+
+    // VALIDACIÓN 3: Límite de personas (Máximo 10)
+    if(p > 10 || p < 1){
+        alert("La cantidad de personas debe ser entre 1 y 10.");
+        return;
+    }
+
+    // Si todo es válido, pasamos a la selección de mesas
+    tempUser={nombre:n,fecha:f,personas:p}; 
+    showView('map'); 
 }
 
+// LÍNEAS 368-380: Configuración de coordenadas y colores para el grid de mesas
 const configMesas=[
     {id:1,c:'m-r',g:'grid-row:8;grid-column:1;'}, {id:2,c:'m-r',g:'grid-row:7;grid-column:1;'},
     {id:3,c:'m-r',g:'grid-row:6;grid-column:1;'}, {id:4,c:'m-y',g:'grid-row:5;grid-column:1;'},
@@ -332,6 +377,7 @@ const configMesas=[
     {id:101,c:'m-t',g:'grid-row:6;grid-column:4;'}
 ];
 
+// LÍNEAS 382-404: Renderizado dinámico del plano de mesas
 function renderMapa(){
     const grid=document.getElementById('mapa-grid');
     grid.innerHTML='<div class="dj-set">DJ</div>';
@@ -354,6 +400,7 @@ function renderMapa(){
     }else info.style.display="none";
 }
 
+// LÍNEAS 406-414: Guardar reserva y limpiar estado
 function finalizarPago(){
     alert("¡Mesa reservada con éxito! 🥂");
     dbReservas.push({ id:Date.now(), ...tempUser, mesas:[...mesasSeleccionadas], total:mesasSeleccionadas.length*40000 });
@@ -362,6 +409,7 @@ function finalizarPago(){
     showView('home');
 }
 
+// LÍNEAS 416-426: Mostrar el historial de reservas del usuario
 function renderList(){
     const container=document.getElementById('reserva-container');
     if(dbReservas.length===0){ container.innerHTML="<p style='text-align:center;'>No hay reservas.</p>"; return; }
@@ -372,6 +420,18 @@ function renderList(){
         </div>
     `).join('');
 }
+
+// LÍNEAS 429-440: RESTRICCIÓN VISUAL DEL CALENDARIO (Frontend)
+const fechaHoy = new Date();
+const hoyISO = fechaHoy.toISOString().split('T')[0];
+
+const fechaMax = new Date();
+fechaMax.setMonth(fechaHoy.getMonth() + 3);
+const maxISO = fechaMax.toISOString().split('T')[0];
+
+const inputFecha = document.getElementById('fecha');
+inputFecha.min = hoyISO; // No permite seleccionar días pasados visualmente
+inputFecha.max = maxISO; // No permite seleccionar más de 3 meses a futuro
 </script>
 
 </body>
